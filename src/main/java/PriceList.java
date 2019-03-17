@@ -8,11 +8,20 @@ public class PriceList {
         else throw new IllegalArgumentException("Product with this code already exists");
     }
 
+    void addProduct(Product product) {
+        if (itsFreeCode(product.code)) list.add(product);
+        else throw new IllegalArgumentException("Product with this code already exists");
+    }
+
     private Product findProduct(int code) {
         for(Product productNow : list)
             if(productNow.code == code) return productNow;
         throw new IllegalArgumentException("Product with this code not found");
     }
+
+    int getCount() { return list.size(); }
+
+    String getProductName(int code) { return findProduct(code).name; }
 
     void changePrice(int code, Price price) {
         findProduct(code).setPrice(price);
@@ -44,6 +53,26 @@ public class PriceList {
             result += el.toString() + "\n";
         return  result;
     }
+
+    public boolean equals(PriceList other) {
+        return true;
+    }
+
+    @Override
+    public boolean equals(Object obj) {
+        try {
+            if (obj.getClass() == this.getClass()) {
+                PriceList other = (PriceList) obj;
+                for(Product el: list) {
+                    if (!el.equals(other.findProduct(el.code))) return false;
+                }
+                return true;
+            }
+            else return false;
+        }catch (Exception e) {
+            return false;
+        }
+    }
 }
 
 class Product {
@@ -71,6 +100,15 @@ class Product {
     public String toString() {
         return "Code: " + code + "; Name: " + name + "; Price: " + price.rub + "." + price.cop + ";";
     }
+
+    @Override
+    public boolean equals(Object obj) {
+        if (obj.getClass() == this.getClass()) {
+            Product other = (Product) obj;
+            return code == other.code && name == other.name && price.equals(other.price);
+        }
+        else return false;
+    }
 }
 
 class Price {
@@ -83,5 +121,13 @@ class Price {
         }
         else
             throw new IllegalArgumentException("Incorrect price");
+    }
+    @Override
+    public boolean equals(Object obj) {
+        if (obj.getClass() == this.getClass()) {
+            Price other = (Price) obj;
+            return rub == other.rub && cop == other.cop;
+        }
+        else return false;
     }
 }
